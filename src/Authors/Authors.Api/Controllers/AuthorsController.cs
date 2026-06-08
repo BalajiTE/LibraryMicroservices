@@ -1,0 +1,61 @@
+using Authors.Application.DTOs;
+using Authors.Application.Services;
+using Microsoft.AspNetCore.Mvc;
+
+namespace Authors.Api.Controllers;
+
+[ApiController]
+[Route("api/[controller]")]
+public sealed class AuthorsController(IAuthorService authorService) : ControllerBase
+{
+    [HttpGet]
+    public async Task<ActionResult<IReadOnlyList<AuthorDto>>> GetAll(CancellationToken cancellationToken) =>
+        Ok(await authorService.GetAllAsync(cancellationToken));
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<AuthorDto>> GetById(string id, CancellationToken cancellationToken)
+    {
+        var author = await authorService.GetByIdAsync(id, cancellationToken);
+        return author is null ? NotFound() : Ok(author);
+    }
+
+    [HttpPost]
+    public async Task<ActionResult<AuthorDto>> Create(
+        [FromBody] CreateAuthorRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var created = await authorService.CreateAsync(request, cancellationToken);
+            return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpPut("{id}")]
+    public async Task<ActionResult<AuthorDto>> Update(
+        string id,
+        [FromBody] UpdateAuthorRequest request,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            var updated = await authorService.UpdateAsync(id, request, cancellationToken);
+            return updated is null ? NotFound() : Ok(updated);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { error = ex.Message });
+        }
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
+    {
+        var deleted = await authorService.DeleteAsync(id, cancellationToken);
+        return deleted ? NoContent() : NotFound();
+    }
+}

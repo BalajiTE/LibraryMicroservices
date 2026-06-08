@@ -1,0 +1,23 @@
+[
+  {
+    "id": "b1",
+    "title": "Pride and Prejudice",
+    "authorId": "a1",
+    "isbn": "978-0141439518",
+    "publishedYear": 1813
+  },
+  {
+    "id": "b2",
+    "title": "1984",
+    "authorId": "a2",
+    "isbn": "978-0451524935",
+    "publishedYear": 1949
+  },
+  {
+    "id": "b3",
+    "title": "Murder on the Orient Express",
+    "authorId": "a3",
+    "isbn": "978-0062693662",
+    "publishedYear": 1934
+  }
+]

@@ -1,0 +1,9 @@
+[
+  {
+    "id": "07060667",
+    "bookId": "b3",
+    "borrowerName": "Test Borrower",
+    "loanDate": "2026-06-02",
+    "returnDate": null
+  }
+]
