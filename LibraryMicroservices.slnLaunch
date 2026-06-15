@@ -1,0 +1,27 @@
+[
+  {
+    "Name": "All Services + Gateway",
+    "Projects": [
+      {
+        "Path": "src\\Authors\\Authors.Api\\Authors.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "Authors.Api"
+      },
+      {
+        "Path": "src\\Books\\Books.Api\\Books.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "Books.Api"
+      },
+      {
+        "Path": "src\\Loans\\Loans.Api\\Loans.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "Loans.Api"
+      },
+      {
+        "Path": "src\\ApiGateway\\ApiGateway\\ApiGateway.csproj",
+        "Action": "Start",
+        "DebugTarget": "ApiGateway"
+      }
+    ]
+  }
+]

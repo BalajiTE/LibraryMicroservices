@@ -1,0 +1,17 @@
+[
+  {
+    "id": "a1",
+    "name": "Jane Austen",
+    "bio": "English novelist known for social commentary and romance."
+  },
+  {
+    "id": "a2",
+    "name": "George Orwell",
+    "bio": "English novelist and essayist, author of dystopian fiction."
+  },
+  {
+    "id": "a3",
+    "name": "Agatha Christie",
+    "bio": "Prolific writer of detective novels and short stories."
+  }
+]

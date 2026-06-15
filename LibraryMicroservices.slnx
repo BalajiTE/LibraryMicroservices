@@ -1,0 +1,40 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/Authors/">
+    <Project Path="src/Authors/Authors.Api/Authors.Api.csproj" />
+    <Project Path="src/Authors/Authors.Application/Authors.Application.csproj" />
+    <Project Path="src/Authors/Authors.Domain/Authors.Domain.csproj" />
+    <Project Path="src/Authors/Authors.Infrastructure/Authors.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Books/">
+    <Project Path="src/Books/Books.Api/Books.Api.csproj" />
+    <Project Path="src/Books/Books.Application/Books.Application.csproj" />
+    <Project Path="src/Books/Books.Domain/Books.Domain.csproj" />
+    <Project Path="src/Books/Books.Infrastructure/Books.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Loans/">
+    <Project Path="src/Loans/Loans.Api/Loans.Api.csproj" />
+    <Project Path="src/Loans/Loans.Application/Loans.Application.csproj" />
+    <Project Path="src/Loans/Loans.Domain/Loans.Domain.csproj" />
+    <Project Path="src/Loans/Loans.Infrastructure/Loans.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/Shared/">
+    <Project Path="src/Shared/Shared.BuildingBlocks/Shared.BuildingBlocks.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Folder Name="/tests/Authors/">
+    <Project Path="tests/Authors/Authors.Api.Tests/Authors.Api.Tests.csproj" />
+    <Project Path="tests/Authors/Authors.Application.Tests/Authors.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Books/">
+    <Project Path="tests/Books/Books.Api.Tests/Books.Api.Tests.csproj" />
+    <Project Path="tests/Books/Books.Application.Tests/Books.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Loans/">
+    <Project Path="tests/Loans/Loans.Api.Tests/Loans.Api.Tests.csproj" />
+    <Project Path="tests/Loans/Loans.Application.Tests/Loans.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Shared/">
+    <Project Path="tests/Shared/Shared.Testing/Shared.Testing.csproj" />
+  </Folder>
+</Solution>

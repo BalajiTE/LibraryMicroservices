@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Authors.Application.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Authors\Authors.Application\Authors.Application.csproj" />
+    <ProjectReference Include="..\..\..\src\Authors\Authors.Infrastructure\Authors.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Testing\Shared.Testing.csproj" />
+  </ItemGroup>
+
+</Project>
