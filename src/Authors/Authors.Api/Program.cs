@@ -1,6 +1,6 @@
 using Authors.Application;
 using Authors.Infrastructure;
-
+// Without deployment configuration
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
