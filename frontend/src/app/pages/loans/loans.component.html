@@ -1,0 +1,59 @@
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <h2>Loans</h2>
+      <p class="muted">Track borrowed books and returns.</p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (auth.canManageCatalog()) {
+    <form class="inline-form grid-form" (ngSubmit)="create()">
+      <select [(ngModel)]="bookId" name="bookId" required>
+        @for (book of books(); track book.id) {
+          <option [value]="book.id">{{ book.title }}</option>
+        }
+      </select>
+      <select [(ngModel)]="memberId" name="memberId" required>
+        @for (member of members(); track member.id) {
+          <option [value]="member.id">{{ member.name }}</option>
+        }
+      </select>
+      <input [(ngModel)]="loanDate" name="loanDate" type="date" required />
+      <button class="btn btn-primary" type="submit">Create loan</button>
+    </form>
+  }
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Book</th>
+        <th>Member</th>
+        <th>Loan date</th>
+        <th>Return date</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (loan of loans(); track loan.id) {
+        <tr>
+          <td>{{ bookTitle(loan.bookId) }}</td>
+          <td>{{ loan.memberName }}</td>
+          <td>{{ loan.loanDate }}</td>
+          <td>{{ loan.returnDate || 'Active' }}</td>
+          <td class="actions">
+            @if (!loan.returnDate && auth.canManageCatalog()) {
+              <button class="btn btn-secondary" type="button" (click)="returnLoan(loan)">Return</button>
+            }
+            @if (auth.canManageCatalog()) {
+              <button class="btn btn-danger" type="button" (click)="remove(loan)">Delete</button>
+            }
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

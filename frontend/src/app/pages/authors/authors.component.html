@@ -1,0 +1,32 @@
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <h2>Authors</h2>
+      <p class="muted">Browse the catalog or manage authors if you are a librarian.</p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (auth.canManageCatalog()) {
+    <form class="inline-form" (ngSubmit)="create()">
+      <input [(ngModel)]="name" name="name" placeholder="Author name" required />
+      <input [(ngModel)]="bio" name="bio" placeholder="Bio" />
+      <button class="btn btn-primary" type="submit">Add author</button>
+    </form>
+  }
+
+  <div class="grid">
+    @for (author of authors(); track author.id) {
+      <article class="card">
+        <h3>{{ author.name }}</h3>
+        <p>{{ author.bio || 'No biography provided.' }}</p>
+        @if (auth.canManageCatalog()) {
+          <button class="btn btn-danger" type="button" (click)="remove(author)">Delete</button>
+        }
+      </article>
+    }
+  </div>
+</section>

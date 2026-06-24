@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Shared\Shared.Api\Shared.Api.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Auth\Shared.Auth.csproj" />
   </ItemGroup>
 
   <ItemGroup>

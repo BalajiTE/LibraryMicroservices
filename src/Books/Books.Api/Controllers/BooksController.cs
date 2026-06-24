@@ -1,6 +1,8 @@
 using Books.Application.DTOs;
 using Books.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Auth;
 
 namespace Books.Api.Controllers;
 
@@ -8,10 +10,12 @@ namespace Books.Api.Controllers;
 [Route("api/[controller]")]
 public sealed class BooksController(IBookService bookService) : ControllerBase
 {
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<BookDto>>> GetAll(CancellationToken cancellationToken) =>
         Ok(await bookService.GetAllAsync(cancellationToken));
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<BookDto>> GetById(string id, CancellationToken cancellationToken)
     {
@@ -19,6 +23,7 @@ public sealed class BooksController(IBookService bookService) : ControllerBase
         return book is null ? NotFound() : Ok(book);
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpPost]
     public async Task<ActionResult<BookDto>> Create(
         [FromBody] CreateBookRequest request,
@@ -35,6 +40,7 @@ public sealed class BooksController(IBookService bookService) : ControllerBase
         }
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpPut("{id}")]
     public async Task<ActionResult<BookDto>> Update(
         string id,
@@ -52,6 +58,7 @@ public sealed class BooksController(IBookService bookService) : ControllerBase
         }
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {

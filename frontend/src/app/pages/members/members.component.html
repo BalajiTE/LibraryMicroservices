@@ -1,0 +1,39 @@
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <h2>Members</h2>
+      <p class="muted">Manage library members linked to loans.</p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <form class="inline-form" (ngSubmit)="create()">
+    <input [(ngModel)]="name" name="name" placeholder="Member name" required />
+    <input [(ngModel)]="email" name="email" placeholder="Email" />
+    <button class="btn btn-primary" type="submit">Add member</button>
+  </form>
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (member of members(); track member.id) {
+        <tr>
+          <td>{{ member.name }}</td>
+          <td>{{ member.email || '—' }}</td>
+          <td>
+            <button class="btn btn-danger" type="button" (click)="remove(member)">Delete</button>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

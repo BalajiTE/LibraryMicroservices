@@ -1,0 +1,55 @@
+<section class="panel">
+  <div class="panel-header">
+    <div>
+      <h2>Books</h2>
+      <p class="muted">Public catalog with librarian tools for maintenance.</p>
+    </div>
+  </div>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (auth.canManageCatalog()) {
+    <form class="inline-form grid-form" (ngSubmit)="create()">
+      <input [(ngModel)]="title" name="title" placeholder="Title" required />
+      <select [(ngModel)]="authorId" name="authorId" required>
+        @for (author of authors(); track author.id) {
+          <option [value]="author.id">{{ author.name }}</option>
+        }
+      </select>
+      <input [(ngModel)]="isbn" name="isbn" placeholder="ISBN" required />
+      <input [(ngModel)]="publishedYear" name="publishedYear" type="number" required />
+      <button class="btn btn-primary" type="submit">Add book</button>
+    </form>
+  }
+
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Author</th>
+        <th>ISBN</th>
+        <th>Year</th>
+        @if (auth.canManageCatalog()) {
+          <th></th>
+        }
+      </tr>
+    </thead>
+    <tbody>
+      @for (book of books(); track book.id) {
+        <tr>
+          <td>{{ book.title }}</td>
+          <td>{{ authorName(book.authorId) }}</td>
+          <td>{{ book.isbn }}</td>
+          <td>{{ book.publishedYear }}</td>
+          @if (auth.canManageCatalog()) {
+            <td>
+              <button class="btn btn-danger" type="button" (click)="remove(book)">Delete</button>
+            </td>
+          }
+        </tr>
+      }
+    </tbody>
+  </table>
+</section>

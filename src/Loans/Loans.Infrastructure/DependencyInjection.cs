@@ -4,6 +4,7 @@ using Loans.Infrastructure.Options;
 using Loans.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Auth;
 using Shared.Persistence;
 
 namespace Loans.Infrastructure;
@@ -15,7 +16,8 @@ public static class DependencyInjection
         IConfiguration configuration)
     {
         services.Configure<MembersApiOptions>(configuration.GetSection(MembersApiOptions.SectionName));
-        services.AddHttpClient<Loans.Application.Integrations.IMembersApiClient, MembersApiClient>();
+        services.AddHttpClient<Loans.Application.Integrations.IMembersApiClient, MembersApiClient>()
+            .AddHttpMessageHandler<ForwardAuthorizationHandler>();
 
         if (Shared.Persistence.DependencyInjection.GetPersistenceProvider(configuration) == PersistenceProvider.SqlServer)
         {

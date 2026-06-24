@@ -1,11 +1,14 @@
 using Loans.Application.DTOs;
 using Loans.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Auth;
 
 namespace Loans.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize(Roles = LibraryRoles.AnyAuthenticated)]
 public sealed class LoansController(ILoanService loanService) : ControllerBase
 {
     [HttpGet]
@@ -19,6 +22,7 @@ public sealed class LoansController(ILoanService loanService) : ControllerBase
         return loan is null ? NotFound() : Ok(loan);
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpPost]
     public async Task<ActionResult<LoanDto>> Create(
         [FromBody] CreateLoanRequest request,
@@ -35,6 +39,7 @@ public sealed class LoansController(ILoanService loanService) : ControllerBase
         }
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpPost("{id}/return")]
     public async Task<ActionResult<LoanDto>> Return(
         string id,
@@ -56,6 +61,7 @@ public sealed class LoansController(ILoanService loanService) : ControllerBase
         }
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {

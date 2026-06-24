@@ -1,0 +1,36 @@
+<header class="topbar">
+  <div class="brand">
+    <span class="brand-mark">📚</span>
+    <div>
+      <h1>Library Portal</h1>
+      <p>LibraryMicroservices</p>
+    </div>
+  </div>
+
+  <nav class="nav">
+    <a routerLink="/books" routerLinkActive="active">Books</a>
+    <a routerLink="/authors" routerLinkActive="active">Authors</a>
+    @if (auth.isLoggedIn) {
+      <a routerLink="/loans" routerLinkActive="active">Loans</a>
+    }
+    @if (auth.canManageCatalog()) {
+      <a routerLink="/members" routerLinkActive="active">Members</a>
+    }
+  </nav>
+
+  <div class="user-box">
+    @if (auth.currentUser(); as user) {
+      <div class="user-meta">
+        <strong>{{ user.username }}</strong>
+        <span>{{ user.roles.join(', ') }}</span>
+      </div>
+      <button type="button" class="btn btn-secondary" (click)="auth.logout()">Sign out</button>
+    } @else {
+      <a routerLink="/login" class="btn btn-primary">Sign in</a>
+    }
+  </div>
+</header>
+
+<main class="page">
+  <router-outlet />
+</main>

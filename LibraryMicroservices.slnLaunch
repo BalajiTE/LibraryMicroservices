@@ -23,6 +23,11 @@
         "DebugTarget": "Members.Api"
       },
       {
+        "Path": "src\\Auth\\Auth.Api\\Auth.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "Auth.Api"
+      },
+      {
         "Path": "src\\ApiGateway\\ApiGateway\\ApiGateway.csproj",
         "Action": "Start",
         "DebugTarget": "ApiGateway"

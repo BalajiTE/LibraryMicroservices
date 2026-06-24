@@ -1,8 +1,10 @@
 using System.Net;
 using System.Net.Http.Json;
 using Members.Application.DTOs;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Shared.Persistence;
 
 namespace Members.Api.Tests;
 
@@ -16,11 +18,12 @@ public sealed class MembersApiTests : IClassFixture<WebApplicationFactory<Progra
 
         _client = factory.WithWebHostBuilder(builder =>
         {
+            builder.UseSetting(DependencyInjection.ProviderConfigKey, nameof(PersistenceProvider.Json));
+            builder.UseEnvironment("Testing");
             builder.ConfigureAppConfiguration((_, config) =>
             {
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    ["Persistence:Provider"] = "Json",
                     ["Members:DataFilePath"] = dataFilePath
                 });
             });

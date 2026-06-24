@@ -9,6 +9,7 @@ Write-Host "  Authors.Api  -> http://localhost:5101"
 Write-Host "  Books.Api    -> http://localhost:5102"
 Write-Host "  Loans.Api    -> http://localhost:5103"
 Write-Host "  Members.Api  -> http://localhost:5104"
+Write-Host "  Auth.Api     -> http://localhost:5105"
 Write-Host "  ApiGateway   -> http://localhost:5000"
 Write-Host ""
 Write-Host "Try: http://localhost:5000/api/members" -ForegroundColor Green
@@ -20,6 +21,7 @@ $projects = @(
     @{ Name = "Books.Api";   Path = "src\Books\Books.Api\Books.Api.csproj";       Profile = "Books.Api" },
     @{ Name = "Loans.Api";   Path = "src\Loans\Loans.Api\Loans.Api.csproj";       Profile = "Loans.Api" },
     @{ Name = "Members.Api"; Path = "src\Members\Members.Api\Members.Api.csproj"; Profile = "Members.Api" },
+    @{ Name = "Auth.Api";    Path = "src\Auth\Auth.Api\Auth.Api.csproj";           Profile = "Auth.Api" },
     @{ Name = "ApiGateway";  Path = "src\ApiGateway\ApiGateway\ApiGateway.csproj"; Profile = "ApiGateway" }
 )
 

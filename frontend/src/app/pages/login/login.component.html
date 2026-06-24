@@ -1,0 +1,35 @@
+<div class="auth-card">
+  <h2>{{ mode === 'login' ? 'Sign in' : 'Create account' }}</h2>
+  <p class="muted">Use seed users like <code>librarian</code> / <code>Password123!</code></p>
+
+  <form (ngSubmit)="submit()">
+    <label>
+      Username
+      <input [(ngModel)]="username" name="username" required />
+    </label>
+
+    @if (mode === 'register') {
+      <label>
+        Email
+        <input [(ngModel)]="email" name="email" type="email" required />
+      </label>
+    }
+
+    <label>
+      Password
+      <input [(ngModel)]="password" name="password" type="password" required />
+    </label>
+
+    @if (error()) {
+      <p class="error">{{ error() }}</p>
+    }
+
+    <button class="btn btn-primary" type="submit">
+      {{ mode === 'login' ? 'Sign in' : 'Register' }}
+    </button>
+  </form>
+
+  <button class="link-btn" type="button" (click)="mode = mode === 'login' ? 'register' : 'login'">
+    {{ mode === 'login' ? 'Need an account? Register' : 'Already have an account? Sign in' }}
+  </button>
+</div>

@@ -1,6 +1,7 @@
 param(
     [string]$Server = "localhost",
-    [string]$Database = "LibraryMicroservices"
+    [string]$Database = "LibraryMicroservices",
+    [switch]$AuthOnly
 )
 
 $ErrorActionPreference = "Stop"
@@ -20,9 +21,16 @@ function Invoke-SqlScript {
     }
 }
 
-Invoke-SqlScript -InputFile (Join-Path $sqlRoot "01-create-database.sql")
-Invoke-SqlScript -InputFile (Join-Path $sqlRoot "02-create-tables.sql") -TargetDatabase $Database
-Invoke-SqlScript -InputFile (Join-Path $sqlRoot "03-seed-data.sql") -TargetDatabase $Database
+if ($AuthOnly) {
+    Invoke-SqlScript -InputFile (Join-Path $sqlRoot "01-create-database.sql")
+    Invoke-SqlScript -InputFile (Join-Path $sqlRoot "04-add-auth-tables.sql") -TargetDatabase $Database
+}
+else {
+    Invoke-SqlScript -InputFile (Join-Path $sqlRoot "01-create-database.sql")
+    Invoke-SqlScript -InputFile (Join-Path $sqlRoot "02-create-tables.sql") -TargetDatabase $Database
+    Invoke-SqlScript -InputFile (Join-Path $sqlRoot "03-seed-data.sql") -TargetDatabase $Database
+    Invoke-SqlScript -InputFile (Join-Path $sqlRoot "04-add-auth-tables.sql") -TargetDatabase $Database
+}
 
 Write-Host ""
 Write-Host "Database '$Database' is ready on $Server."

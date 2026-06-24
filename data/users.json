@@ -1,0 +1,23 @@
+[
+  {
+    "id": "u1",
+    "username": "admin",
+    "email": "admin@library.local",
+    "passwordHash": "AQAAAAIAAYagAAAAEHJUDbb3QN71tMQBNybl/mCkDvozC17kDjEgowMcj/8w+eMehO90wICy28A5m8wgxg==",
+    "isActive": true
+  },
+  {
+    "id": "u2",
+    "username": "librarian",
+    "email": "librarian@library.local",
+    "passwordHash": "AQAAAAIAAYagAAAAEHJUDbb3QN71tMQBNybl/mCkDvozC17kDjEgowMcj/8w+eMehO90wICy28A5m8wgxg==",
+    "isActive": true
+  },
+  {
+    "id": "u3",
+    "username": "member",
+    "email": "member@library.local",
+    "passwordHash": "AQAAAAIAAYagAAAAEHJUDbb3QN71tMQBNybl/mCkDvozC17kDjEgowMcj/8w+eMehO90wICy28A5m8wgxg==",
+    "isActive": true
+  }
+]

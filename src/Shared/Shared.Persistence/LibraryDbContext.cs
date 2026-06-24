@@ -9,6 +9,9 @@ public sealed class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
     public DbSet<BookRecord> Books => Set<BookRecord>();
     public DbSet<MemberRecord> Members => Set<MemberRecord>();
     public DbSet<LoanRecord> Loans => Set<LoanRecord>();
+    public DbSet<UserRecord> Users => Set<UserRecord>();
+    public DbSet<RoleRecord> Roles => Set<RoleRecord>();
+    public DbSet<UserRoleRecord> UserRoles => Set<UserRoleRecord>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,6 +65,44 @@ public sealed class LibraryDbContext(DbContextOptions<LibraryDbContext> options)
                 .OnDelete(DeleteBehavior.Restrict);
             entity.HasIndex(loan => loan.BookId);
             entity.HasIndex(loan => loan.MemberId);
+        });
+
+        modelBuilder.Entity<UserRecord>(entity =>
+        {
+            entity.ToTable("Users");
+            entity.HasKey(user => user.Id);
+            entity.Property(user => user.Id).HasMaxLength(50);
+            entity.Property(user => user.Username).HasMaxLength(100).IsRequired();
+            entity.Property(user => user.Email).HasMaxLength(200).IsRequired();
+            entity.Property(user => user.PasswordHash).HasMaxLength(500).IsRequired();
+            entity.HasIndex(user => user.Username).IsUnique();
+            entity.HasIndex(user => user.Email).IsUnique();
+        });
+
+        modelBuilder.Entity<RoleRecord>(entity =>
+        {
+            entity.ToTable("Roles");
+            entity.HasKey(role => role.Id);
+            entity.Property(role => role.Id).HasMaxLength(50);
+            entity.Property(role => role.Name).HasMaxLength(100).IsRequired();
+            entity.Property(role => role.Description).HasMaxLength(500);
+            entity.HasIndex(role => role.Name).IsUnique();
+        });
+
+        modelBuilder.Entity<UserRoleRecord>(entity =>
+        {
+            entity.ToTable("UserRoles");
+            entity.HasKey(userRole => new { userRole.UserId, userRole.RoleId });
+            entity.Property(userRole => userRole.UserId).HasMaxLength(50);
+            entity.Property(userRole => userRole.RoleId).HasMaxLength(50);
+            entity.HasOne<UserRecord>()
+                .WithMany()
+                .HasForeignKey(userRole => userRole.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+            entity.HasOne<RoleRecord>()
+                .WithMany()
+                .HasForeignKey(userRole => userRole.RoleId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
     }
 }

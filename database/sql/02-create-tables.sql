@@ -5,6 +5,18 @@ IF OBJECT_ID(N'dbo.Loans', N'U') IS NOT NULL
     DROP TABLE dbo.Loans;
 GO
 
+IF OBJECT_ID(N'dbo.UserRoles', N'U') IS NOT NULL
+    DROP TABLE dbo.UserRoles;
+GO
+
+IF OBJECT_ID(N'dbo.Users', N'U') IS NOT NULL
+    DROP TABLE dbo.Users;
+GO
+
+IF OBJECT_ID(N'dbo.Roles', N'U') IS NOT NULL
+    DROP TABLE dbo.Roles;
+GO
+
 IF OBJECT_ID(N'dbo.Members', N'U') IS NOT NULL
     DROP TABLE dbo.Members;
 GO
@@ -67,4 +79,35 @@ CREATE INDEX IX_Loans_BookId ON dbo.Loans (BookId);
 GO
 
 CREATE INDEX IX_Loans_MemberId ON dbo.Loans (MemberId);
+GO
+
+CREATE TABLE dbo.Roles
+(
+    Id          NVARCHAR(50)  NOT NULL CONSTRAINT PK_Roles PRIMARY KEY,
+    Name        NVARCHAR(100) NOT NULL,
+    Description NVARCHAR(500) NULL,
+    CONSTRAINT UQ_Roles_Name UNIQUE (Name)
+);
+GO
+
+CREATE TABLE dbo.Users
+(
+    Id           NVARCHAR(50)  NOT NULL CONSTRAINT PK_Users PRIMARY KEY,
+    Username     NVARCHAR(100) NOT NULL,
+    Email        NVARCHAR(200) NOT NULL,
+    PasswordHash NVARCHAR(500) NOT NULL,
+    IsActive     BIT           NOT NULL CONSTRAINT DF_Users_IsActive DEFAULT (1),
+    CONSTRAINT UQ_Users_Username UNIQUE (Username),
+    CONSTRAINT UQ_Users_Email UNIQUE (Email)
+);
+GO
+
+CREATE TABLE dbo.UserRoles
+(
+    UserId NVARCHAR(50) NOT NULL,
+    RoleId NVARCHAR(50) NOT NULL,
+    CONSTRAINT PK_UserRoles PRIMARY KEY (UserId, RoleId),
+    CONSTRAINT FK_UserRoles_Users FOREIGN KEY (UserId) REFERENCES dbo.Users (Id) ON DELETE CASCADE,
+    CONSTRAINT FK_UserRoles_Roles FOREIGN KEY (RoleId) REFERENCES dbo.Roles (Id) ON DELETE CASCADE
+);
 GO

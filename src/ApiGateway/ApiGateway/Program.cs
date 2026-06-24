@@ -3,6 +3,16 @@ using Shared.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("Frontend", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
@@ -13,6 +23,8 @@ builder.Services.AddHttpClient("openapi-proxy", client =>
 });
 
 var app = builder.Build();
+
+app.UseCors("Frontend");
 
 app.MapGet("/health", () => Results.Ok(new { service = "ApiGateway", status = "Healthy" }));
 
@@ -30,6 +42,7 @@ app.MapGet("/health/services", async (IHttpClientFactory httpClientFactory, ICon
             5102 => "Books",
             5103 => "Loans",
             5104 => "Members",
+            5105 => "Auth",
             _ => serviceUrl
         };
 

@@ -1,0 +1,5 @@
+[
+  { "id": "r1", "name": "Admin", "description": "Full system access including user management" },
+  { "id": "r2", "name": "Librarian", "description": "Manage catalog, members, and loans" },
+  { "id": "r3", "name": "Member", "description": "Browse catalog and view own loans" }
+]

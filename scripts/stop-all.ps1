@@ -1,7 +1,7 @@
 # Stops all LibraryMicroservices API and gateway processes.
 # Usage: .\scripts\stop-all.ps1
 
-$names = @("ApiGateway", "Authors.Api", "Books.Api", "Loans.Api")
+$names = @("ApiGateway", "Authors.Api", "Books.Api", "Loans.Api", "Members.Api", "Auth.Api")
 $stopped = 0
 
 foreach ($name in $names) {

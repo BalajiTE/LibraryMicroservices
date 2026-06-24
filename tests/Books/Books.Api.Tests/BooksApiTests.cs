@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using Books.Application.DTOs;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
+using Shared.Persistence;
 
 namespace Books.Api.Tests;
 
@@ -16,11 +17,11 @@ public sealed class BooksApiTests : IClassFixture<WebApplicationFactory<Program>
 
         _client = factory.WithWebHostBuilder(builder =>
         {
+            builder.UseSetting(DependencyInjection.ProviderConfigKey, nameof(PersistenceProvider.Json));
             builder.ConfigureAppConfiguration((_, config) =>
             {
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    ["Persistence:Provider"] = "Json",
                     ["Books:DataFilePath"] = dataFilePath
                 });
             });

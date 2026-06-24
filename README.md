@@ -11,6 +11,7 @@ A .NET microservices solution for a library domain, built with **Clean Architect
 | **Books.Api** | `http://localhost:5102` | 5102 | Manage books (linked to authors by `authorId`) |
 | **Loans.Api** | `http://localhost:5103` | 5103 | Manage book loans and returns |
 | **Members.Api** | `http://localhost:5104` | 5104 | Manage library members (linked to loans by `memberId`) |
+| **Auth.Api** | `http://localhost:5105` | 5105 | Login, registration, users, and roles (JWT) |
 
 Each backend service follows the same layered structure:
 
@@ -22,7 +23,77 @@ Service/
 └── Api/             # ASP.NET Core Web API
 ```
 
-Shared JSON persistence logic lives in `Shared.BuildingBlocks`. SQL Server persistence uses EF Core in `Shared.Persistence`.
+Shared JSON persistence logic lives in `Shared.BuildingBlocks`. SQL Server persistence uses EF Core in `Shared.Persistence`. JWT authentication is shared via `Shared.Auth`.
+
+---
+
+## Authentication and authorization
+
+The solution uses **JWT bearer tokens** with role-based access control.
+
+### Roles
+
+| Role | Access |
+|------|--------|
+| **Admin** | Full access, including user/role management |
+| **Librarian** | Manage authors, books, members, and loans |
+| **Member** | Browse catalog (anonymous) and view loans |
+
+### Seed users (password: `Password123!`)
+
+| Username | Role |
+|----------|------|
+| `admin` | Admin |
+| `librarian` | Librarian |
+| `member` | Member |
+
+### Login
+
+```powershell
+curl -X POST http://localhost:5105/api/auth/login `
+  -H "Content-Type: application/json" `
+  -d '{"username":"librarian","password":"Password123!"}'
+```
+
+Via gateway:
+
+```powershell
+curl -X POST http://localhost:5000/api/auth/login `
+  -H "Content-Type: application/json" `
+  -d '{"username":"librarian","password":"Password123!"}'
+```
+
+Use the returned `accessToken` on protected endpoints:
+
+```powershell
+curl http://localhost:5000/api/loans `
+  -H "Authorization: Bearer <accessToken>"
+```
+
+### Auth API endpoints
+
+| Method | Path | Auth | Description |
+|--------|------|------|-------------|
+| `POST` | `/api/auth/login` | Anonymous | Sign in and receive JWT |
+| `POST` | `/api/auth/register` | Anonymous | Register as Member role |
+| `GET/POST/PUT/DELETE` | `/api/users` | Admin | User management |
+| `GET/POST/PUT/DELETE` | `/api/roles` | Admin | Role management |
+
+### Data stores
+
+Auth entities are stored in:
+
+- **JSON:** `data/users.json`, `data/roles.json`, `data/userRoles.json`
+- **SQL Server:** `Users`, `Roles`, `UserRoles` tables (included in `database/sql/02-create-tables.sql` and seed script)
+
+Re-run `database/setup-database.ps1` after pulling these changes to create auth tables in SQL Server.
+
+**If you already have library data and only need auth tables:**
+
+```powershell
+cd C:\Me\Projects\LibraryMicroservices\database
+.\setup-database.ps1 -AuthOnly
+```
 
 ---
 
@@ -64,7 +135,13 @@ curl http://localhost:5104/swagger/v1/swagger.json
 curl http://localhost:5000/openapi/members/v1/swagger.json
 ```
 
-A **502/503 on Members** almost always means **Members.Api is not running** on port 5104. Include it in your startup profile or run `dotnet run --project src/Members/Members.Api`.
+A **502/503 on Members or Auth** almost always means that service is **not running** on its port. Include **Members.Api (5104)** and **Auth.Api (5105)** in your startup profile, or run `scripts/start-all.ps1`, then verify:
+
+```powershell
+curl http://localhost:5105/health
+curl http://localhost:5105/swagger/v1/swagger.json
+curl http://localhost:5000/openapi/auth/v1/swagger.json
+```
 
 **Examples**
 
@@ -405,8 +482,19 @@ dotnet run --project src/Authors/Authors.Api
 dotnet run --project src/Books/Books.Api
 dotnet run --project src/Loans/Loans.Api
 dotnet run --project src/Members/Members.Api
+dotnet run --project src/Auth/Auth.Api
 dotnet run --project src/ApiGateway/ApiGateway
 ```
+
+### Option D: Angular UI
+
+```powershell
+# Start backend first (Option A, B, or C), then:
+cd frontend
+npm start
+```
+
+Open http://localhost:4200 — see `frontend/README.md` for details.
 
 ---
 

@@ -1,17 +1,22 @@
 using Members.Application.DTOs;
 using Members.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Auth;
 
 namespace Members.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
+[Authorize]
 public sealed class MembersController(IMemberService memberService) : ControllerBase
 {
+    [Authorize(Roles = LibraryRoles.AnyAuthenticated)]
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<MemberDto>>> GetAll(CancellationToken cancellationToken) =>
         Ok(await memberService.GetAllAsync(cancellationToken));
 
+    [Authorize(Roles = LibraryRoles.AnyAuthenticated)]
     [HttpGet("{id}")]
     public async Task<ActionResult<MemberDto>> GetById(string id, CancellationToken cancellationToken)
     {
@@ -19,6 +24,7 @@ public sealed class MembersController(IMemberService memberService) : Controller
         return member is null ? NotFound() : Ok(member);
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpPost]
     public async Task<ActionResult<MemberDto>> Create(
         [FromBody] CreateMemberRequest request,
@@ -35,6 +41,7 @@ public sealed class MembersController(IMemberService memberService) : Controller
         }
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpPut("{id}")]
     public async Task<ActionResult<MemberDto>> Update(
         string id,
@@ -52,6 +59,7 @@ public sealed class MembersController(IMemberService memberService) : Controller
         }
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {

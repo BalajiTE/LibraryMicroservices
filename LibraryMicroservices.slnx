@@ -24,7 +24,18 @@
     <Project Path="src/Members/Members.Domain/Members.Domain.csproj" />
     <Project Path="src/Members/Members.Infrastructure/Members.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Auth/">
+    <Project Path="src/Auth/Auth.Api/Auth.Api.csproj" />
+    <Project Path="src/Auth/Auth.Application/Auth.Application.csproj" />
+    <Project Path="src/Auth/Auth.Domain/Auth.Domain.csproj" />
+    <Project Path="src/Auth/Auth.Infrastructure/Auth.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/src/ApiGateway/">
+    <Project Path="src/ApiGateway/ApiGateway/ApiGateway.csproj" />
+  </Folder>
   <Folder Name="/src/Shared/">
+    <Project Path="src/Shared/Shared.Api/Shared.Api.csproj" />
+    <Project Path="src/Shared/Shared.Auth/Shared.Auth.csproj" />
     <Project Path="src/Shared/Shared.BuildingBlocks/Shared.BuildingBlocks.csproj" />
     <Project Path="src/Shared/Shared.Persistence/Shared.Persistence.csproj" />
   </Folder>
@@ -44,6 +55,10 @@
   <Folder Name="/tests/Members/">
     <Project Path="tests/Members/Members.Api.Tests/Members.Api.Tests.csproj" />
     <Project Path="tests/Members/Members.Application.Tests/Members.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Auth/">
+    <Project Path="tests/Auth/Auth.Api.Tests/Auth.Api.Tests.csproj" />
+    <Project Path="tests/Auth/Auth.Application.Tests/Auth.Application.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Shared/">
     <Project Path="tests/Shared/Shared.Testing/Shared.Testing.csproj" />

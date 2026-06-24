@@ -5,6 +5,43 @@ DELETE FROM dbo.Loans;
 DELETE FROM dbo.Books;
 DELETE FROM dbo.Members;
 DELETE FROM dbo.Authors;
+
+IF OBJECT_ID(N'dbo.UserRoles', N'U') IS NOT NULL
+    DELETE FROM dbo.UserRoles;
+IF OBJECT_ID(N'dbo.Users', N'U') IS NOT NULL
+    DELETE FROM dbo.Users;
+IF OBJECT_ID(N'dbo.Roles', N'U') IS NOT NULL
+    DELETE FROM dbo.Roles;
+GO
+
+IF OBJECT_ID(N'dbo.Roles', N'U') IS NOT NULL
+BEGIN
+    INSERT INTO dbo.Roles (Id, Name, Description)
+    VALUES
+        (N'r1', N'Admin', N'Full system access including user management'),
+        (N'r2', N'Librarian', N'Manage catalog, members, and loans'),
+        (N'r3', N'Member', N'Browse catalog and view loans');
+END
+GO
+
+IF OBJECT_ID(N'dbo.Users', N'U') IS NOT NULL
+BEGIN
+    INSERT INTO dbo.Users (Id, Username, Email, PasswordHash, IsActive)
+    VALUES
+        (N'u1', N'admin', N'admin@library.local', N'AQAAAAIAAYagAAAAEHJUDbb3QN71tMQBNybl/mCkDvozC17kDjEgowMcj/8w+eMehO90wICy28A5m8wgxg==', 1),
+        (N'u2', N'librarian', N'librarian@library.local', N'AQAAAAIAAYagAAAAEHJUDbb3QN71tMQBNybl/mCkDvozC17kDjEgowMcj/8w+eMehO90wICy28A5m8wgxg==', 1),
+        (N'u3', N'member', N'member@library.local', N'AQAAAAIAAYagAAAAEHJUDbb3QN71tMQBNybl/mCkDvozC17kDjEgowMcj/8w+eMehO90wICy28A5m8wgxg==', 1);
+END
+GO
+
+IF OBJECT_ID(N'dbo.UserRoles', N'U') IS NOT NULL
+BEGIN
+    INSERT INTO dbo.UserRoles (UserId, RoleId)
+    VALUES
+        (N'u1', N'r1'),
+        (N'u2', N'r2'),
+        (N'u3', N'r3');
+END
 GO
 
 INSERT INTO dbo.Authors (Id, Name, Bio)

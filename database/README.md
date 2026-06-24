@@ -17,6 +17,9 @@ This folder contains scripts to create a local SQL Server database that mirrors 
 | `Books` | `data/books.json` | Books linked to authors |
 | `Members` | `data/members.json` | Library members who borrow books |
 | `Loans` | `data/loans.json` | Book loans linked to members |
+| `Roles` | `data/roles.json` | Auth roles (Admin, Librarian, Member) |
+| `Users` | `data/users.json` | Login accounts |
+| `UserRoles` | `data/userRoles.json` | User-to-role assignments |
 
 ## Quick setup
 
@@ -34,12 +37,19 @@ Optional parameters:
 .\setup-database.ps1 -Server "(localdb)\MSSQLLocalDB"
 ```
 
+**Existing database missing auth tables** (adds `Users`, `Roles`, `UserRoles` without wiping catalog data):
+
+```powershell
+.\setup-database.ps1 -AuthOnly
+```
+
 ## Manual setup
 
 ```powershell
 sqlcmd -S localhost -E -i sql\01-create-database.sql
 sqlcmd -S localhost -E -d LibraryMicroservices -i sql\02-create-tables.sql
 sqlcmd -S localhost -E -d LibraryMicroservices -i sql\03-seed-data.sql
+sqlcmd -S localhost -E -d LibraryMicroservices -i sql\04-add-auth-tables.sql
 ```
 
 To upgrade an existing database that still has `Borrowers` / `BorrowerId`:

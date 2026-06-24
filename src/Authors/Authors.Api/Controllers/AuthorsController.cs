@@ -1,6 +1,8 @@
 using Authors.Application.DTOs;
 using Authors.Application.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Auth;
 
 namespace Authors.Api.Controllers;
 
@@ -8,10 +10,12 @@ namespace Authors.Api.Controllers;
 [Route("api/[controller]")]
 public sealed class AuthorsController(IAuthorService authorService) : ControllerBase
 {
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IReadOnlyList<AuthorDto>>> GetAll(CancellationToken cancellationToken) =>
         Ok(await authorService.GetAllAsync(cancellationToken));
 
+    [AllowAnonymous]
     [HttpGet("{id}")]
     public async Task<ActionResult<AuthorDto>> GetById(string id, CancellationToken cancellationToken)
     {
@@ -19,6 +23,7 @@ public sealed class AuthorsController(IAuthorService authorService) : Controller
         return author is null ? NotFound() : Ok(author);
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpPost]
     public async Task<ActionResult<AuthorDto>> Create(
         [FromBody] CreateAuthorRequest request,
@@ -35,6 +40,7 @@ public sealed class AuthorsController(IAuthorService authorService) : Controller
         }
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpPut("{id}")]
     public async Task<ActionResult<AuthorDto>> Update(
         string id,
@@ -52,6 +58,7 @@ public sealed class AuthorsController(IAuthorService authorService) : Controller
         }
     }
 
+    [Authorize(Roles = LibraryRoles.AdminOrLibrarian)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(string id, CancellationToken cancellationToken)
     {

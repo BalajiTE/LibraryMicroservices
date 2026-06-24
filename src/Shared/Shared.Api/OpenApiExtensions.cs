@@ -14,7 +14,8 @@ public static class OpenApiExtensions
         [5101] = "authors",
         [5102] = "books",
         [5103] = "loans",
-        [5104] = "members"
+        [5104] = "members",
+        [5105] = "auth"
     };
 
     public static IServiceCollection AddLibrarySwagger(
@@ -151,6 +152,7 @@ public static class OpenApiExtensions
                     5102 => "Books API",
                     5103 => "Loans API",
                     5104 => "Members API",
+                    5105 => "Auth API",
                     _ => serviceUrl
                 };
 

@@ -2,9 +2,11 @@ using System.Net;
 using System.Net.Http.Json;
 using Loans.Application.DTOs;
 using Loans.Application.Integrations;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Persistence;
 
 namespace Loans.Api.Tests;
 
@@ -18,11 +20,12 @@ public sealed class LoansApiTests : IClassFixture<WebApplicationFactory<Program>
 
         _client = factory.WithWebHostBuilder(builder =>
         {
+            builder.UseSetting(DependencyInjection.ProviderConfigKey, nameof(PersistenceProvider.Json));
+            builder.UseEnvironment("Testing");
             builder.ConfigureAppConfiguration((_, config) =>
             {
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
-                    ["Persistence:Provider"] = "Json",
                     ["Loans:DataFilePath"] = loansFilePath
                 });
             });
