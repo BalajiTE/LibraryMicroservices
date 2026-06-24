@@ -1,7 +1,10 @@
 using Loans.Domain.Repositories;
+using Loans.Infrastructure.Integrations;
+using Loans.Infrastructure.Options;
 using Loans.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Persistence;
 
 namespace Loans.Infrastructure;
 
@@ -11,12 +14,24 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddSingleton<ILoanRepository>(sp =>
+        services.Configure<MembersApiOptions>(configuration.GetSection(MembersApiOptions.SectionName));
+        services.AddHttpClient<Loans.Application.Integrations.IMembersApiClient, MembersApiClient>();
+
+        if (Shared.Persistence.DependencyInjection.GetPersistenceProvider(configuration) == PersistenceProvider.SqlServer)
         {
-            var configuration = sp.GetRequiredService<IConfiguration>();
-            var dataFilePath = ResolveDataFilePath(configuration, "Loans:DataFilePath", "loans.json");
-            return new JsonLoanRepository(dataFilePath);
-        });
+            services.AddLibraryDbContext(configuration);
+            services.AddScoped<ILoanRepository, SqlLoanRepository>();
+        }
+        else
+        {
+            services.AddSingleton<ILoanRepository>(sp =>
+            {
+                var configuration = sp.GetRequiredService<IConfiguration>();
+                var dataFilePath = ResolveDataFilePath(configuration, "Loans:DataFilePath", "loans.json");
+                return new JsonLoanRepository(dataFilePath);
+            });
+        }
+
         return services;
     }
 

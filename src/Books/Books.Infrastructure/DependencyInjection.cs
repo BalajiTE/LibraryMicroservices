@@ -2,6 +2,7 @@ using Books.Domain.Repositories;
 using Books.Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Shared.Persistence;
 
 namespace Books.Infrastructure;
 
@@ -11,12 +12,21 @@ public static class DependencyInjection
         this IServiceCollection services,
         IConfiguration configuration)
     {
-        services.AddSingleton<IBookRepository>(sp =>
+        if (Shared.Persistence.DependencyInjection.GetPersistenceProvider(configuration) == PersistenceProvider.SqlServer)
         {
-            var configuration = sp.GetRequiredService<IConfiguration>();
-            var dataFilePath = ResolveDataFilePath(configuration, "Books:DataFilePath", "books.json");
-            return new JsonBookRepository(dataFilePath);
-        });
+            services.AddLibraryDbContext(configuration);
+            services.AddScoped<IBookRepository, SqlBookRepository>();
+        }
+        else
+        {
+            services.AddSingleton<IBookRepository>(sp =>
+            {
+                var configuration = sp.GetRequiredService<IConfiguration>();
+                var dataFilePath = ResolveDataFilePath(configuration, "Books:DataFilePath", "books.json");
+                return new JsonBookRepository(dataFilePath);
+            });
+        }
+
         return services;
     }
 

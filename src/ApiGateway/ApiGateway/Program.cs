@@ -1,4 +1,5 @@
 using System.Net;
+using Shared.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,6 +7,10 @@ builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
 
 builder.Services.AddHttpClient("health-check");
+builder.Services.AddHttpClient("openapi-proxy", client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(10);
+});
 
 var app = builder.Build();
 
@@ -24,6 +29,7 @@ app.MapGet("/health/services", async (IHttpClientFactory httpClientFactory, ICon
             5101 => "Authors",
             5102 => "Books",
             5103 => "Loans",
+            5104 => "Members",
             _ => serviceUrl
         };
 
@@ -58,6 +64,10 @@ app.MapGet("/health/services", async (IHttpClientFactory httpClientFactory, ICon
         : Results.Json(new { gateway = "Degraded", services = results }, statusCode: (int)HttpStatusCode.ServiceUnavailable);
 });
 
+var swaggerServices = OpenApiExtensions.GetGatewaySwaggerEndpoints(app.Configuration);
+
+app.MapGatewayOpenApiProxies(app.Configuration);
+app.UseGatewaySwaggerUi(swaggerServices);
 app.MapReverseProxy();
 
 app.Run();

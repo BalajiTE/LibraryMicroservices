@@ -2,14 +2,14 @@
   {
     "id": "l1",
     "bookId": "b1",
-    "borrowerName": "Alice Smith",
+    "memberId": "m1",
     "loanDate": "2026-05-01",
     "returnDate": null
   },
   {
     "id": "l2",
     "bookId": "b2",
-    "borrowerName": "Bob Jones",
+    "memberId": "m2",
     "loanDate": "2026-04-15",
     "returnDate": "2026-05-10"
   }

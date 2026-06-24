@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <RootNamespace>Members.Infrastructure</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Members.Application\Members.Application.csproj" />
+    <ProjectReference Include="..\Members.Domain\Members.Domain.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.BuildingBlocks\Shared.BuildingBlocks.csproj" />
+    <ProjectReference Include="..\..\Shared\Shared.Persistence\Shared.Persistence.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.0" />
+  </ItemGroup>
+
+</Project>

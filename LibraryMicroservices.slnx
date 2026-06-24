@@ -18,8 +18,15 @@
     <Project Path="src/Loans/Loans.Domain/Loans.Domain.csproj" />
     <Project Path="src/Loans/Loans.Infrastructure/Loans.Infrastructure.csproj" />
   </Folder>
+  <Folder Name="/src/Members/">
+    <Project Path="src/Members/Members.Api/Members.Api.csproj" />
+    <Project Path="src/Members/Members.Application/Members.Application.csproj" />
+    <Project Path="src/Members/Members.Domain/Members.Domain.csproj" />
+    <Project Path="src/Members/Members.Infrastructure/Members.Infrastructure.csproj" />
+  </Folder>
   <Folder Name="/src/Shared/">
     <Project Path="src/Shared/Shared.BuildingBlocks/Shared.BuildingBlocks.csproj" />
+    <Project Path="src/Shared/Shared.Persistence/Shared.Persistence.csproj" />
   </Folder>
   <Folder Name="/tests/" />
   <Folder Name="/tests/Authors/">
@@ -33,6 +40,10 @@
   <Folder Name="/tests/Loans/">
     <Project Path="tests/Loans/Loans.Api.Tests/Loans.Api.Tests.csproj" />
     <Project Path="tests/Loans/Loans.Application.Tests/Loans.Application.Tests.csproj" />
+  </Folder>
+  <Folder Name="/tests/Members/">
+    <Project Path="tests/Members/Members.Api.Tests/Members.Api.Tests.csproj" />
+    <Project Path="tests/Members/Members.Application.Tests/Members.Application.Tests.csproj" />
   </Folder>
   <Folder Name="/tests/Shared/">
     <Project Path="tests/Shared/Shared.Testing/Shared.Testing.csproj" />

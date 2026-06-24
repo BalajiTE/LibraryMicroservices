@@ -1,19 +1,17 @@
 using Books.Application;
 using Books.Infrastructure;
+using Shared.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddLibrarySwagger("Books API", "Library books microservice");
 builder.Services.AddBooksApplication();
 builder.Services.AddBooksInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseLibrarySwaggerUi();
 
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok(new { service = "Books", status = "Healthy" }));

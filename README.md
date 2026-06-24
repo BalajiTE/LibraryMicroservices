@@ -10,6 +10,7 @@ A .NET microservices solution for a library domain, built with **Clean Architect
 | **Authors.Api** | `http://localhost:5101` | 5101 | Manage authors |
 | **Books.Api** | `http://localhost:5102` | 5102 | Manage books (linked to authors by `authorId`) |
 | **Loans.Api** | `http://localhost:5103` | 5103 | Manage book loans and returns |
+| **Members.Api** | `http://localhost:5104` | 5104 | Manage library members (linked to loans by `memberId`) |
 
 Each backend service follows the same layered structure:
 
@@ -21,7 +22,7 @@ Service/
 └── Api/             # ASP.NET Core Web API
 ```
 
-Shared JSON persistence logic lives in `Shared.BuildingBlocks`.
+Shared JSON persistence logic lives in `Shared.BuildingBlocks`. SQL Server persistence uses EF Core in `Shared.Persistence`.
 
 ---
 
@@ -40,6 +41,30 @@ These exist only on the API Gateway (`http://localhost:5000`).
 | `GET` | `/authors/health` | Proxied health check for Authors service |
 | `GET` | `/books/health` | Proxied health check for Books service |
 | `GET` | `/loans/health` | Proxied health check for Loans service |
+
+### Swagger (Development only)
+
+Swagger UI is enabled when `ASPNETCORE_ENVIRONMENT=Development`.
+
+| Location | URL | Description |
+|----------|-----|-------------|
+| **Gateway (all APIs)** | `http://localhost:5000/swagger` | Single UI with a dropdown for Authors, Books, Loans, and Members |
+| Authors | `http://localhost:5101/swagger` | Authors API only |
+| Books | `http://localhost:5102/swagger` | Books API only |
+| Loans | `http://localhost:5103/swagger` | Loans API only |
+| Members | `http://localhost:5104/swagger` | Members API only |
+
+Start all services (e.g. via **All Services + Gateway** in Visual Studio or `scripts/start-all.ps1`), then open the gateway Swagger page. OpenAPI specs are proxied through the gateway at `/openapi/{service}/v1/swagger.json`, so there are no cross-origin issues.
+
+If a spec fails to load, confirm that service is running:
+
+```powershell
+curl http://localhost:5104/health
+curl http://localhost:5104/swagger/v1/swagger.json
+curl http://localhost:5000/openapi/members/v1/swagger.json
+```
+
+A **502/503 on Members** almost always means **Members.Api is not running** on port 5104. Include it in your startup profile or run `dotnet run --project src/Members/Members.Api`.
 
 **Examples**
 
@@ -175,6 +200,30 @@ curl http://localhost:5102/health
 
 ---
 
+### Members API
+
+| Method | Path | Gateway URL | Direct URL |
+|--------|------|-------------|------------|
+| `GET` | `/api/members` | `http://localhost:5000/api/members` | `http://localhost:5104/api/members` |
+| `GET` | `/api/members/{id}` | `http://localhost:5000/api/members/{id}` | `http://localhost:5104/api/members/{id}` |
+| `POST` | `/api/members` | `http://localhost:5000/api/members` | `http://localhost:5104/api/members` |
+| `PUT` | `/api/members/{id}` | `http://localhost:5000/api/members/{id}` | `http://localhost:5104/api/members/{id}` |
+| `DELETE` | `/api/members/{id}` | `http://localhost:5000/api/members/{id}` | `http://localhost:5104/api/members/{id}` |
+| `GET` | `/health` | — | `http://localhost:5104/health` |
+
+**Request bodies**
+
+Create member (`POST`):
+
+```json
+{
+  "name": "Alice Smith",
+  "email": "alice.smith@example.com"
+}
+```
+
+---
+
 ### Loans API
 
 | Method | Path | Gateway URL | Direct URL |
@@ -193,7 +242,7 @@ Create loan (`POST`):
 ```json
 {
   "bookId": "b3",
-  "borrowerName": "Alice Smith",
+  "memberId": "m1",
   "loanDate": "2026-06-06"
 }
 ```
@@ -212,7 +261,8 @@ Return loan (`POST /api/loans/{id}/return`):
 {
   "id": "l1",
   "bookId": "b1",
-  "borrowerName": "Alice Smith",
+  "memberId": "m1",
+  "memberName": "Alice Smith",
   "loanDate": "2026-05-01",
   "returnDate": null
 }
@@ -224,7 +274,7 @@ Return loan (`POST /api/loans/{id}/return`):
 # Via gateway
 curl http://localhost:5000/api/loans
 curl http://localhost:5000/api/loans/l1
-curl -X POST http://localhost:5000/api/loans -H "Content-Type: application/json" -d "{\"bookId\":\"b3\",\"borrowerName\":\"Alice\",\"loanDate\":\"2026-06-06\"}"
+curl -X POST http://localhost:5000/api/loans -H "Content-Type: application/json" -d "{\"bookId\":\"b3\",\"memberId\":\"m1\",\"loanDate\":\"2026-06-06\"}"
 curl -X POST http://localhost:5000/api/loans/l1/return -H "Content-Type: application/json" -d "{\"returnDate\":\"2026-06-10\"}"
 curl -X DELETE http://localhost:5000/api/loans/l1
 
@@ -252,20 +302,59 @@ curl http://localhost:5103/health
 
 ## Seed data
 
-Seed data is stored under `data/`:
+Seed data is available in **JSON files** under `data/` and in the **SQL Server** database (see [Persistence](#persistence) below).
 
-| File | Sample IDs |
+| File / Table | Sample IDs |
 |------|------------|
-| `authors.json` | `a1`, `a2`, `a3` |
-| `books.json` | `b1`, `b2`, `b3` |
-| `loans.json` | `l1`, `l2` |
+| `authors.json` / `Authors` | `a1`, `a2`, `a3` |
+| `books.json` / `Books` | `b1`, `b2`, `b3` |
+| `members.json` / `Members` | `m1`, `m2` |
+| `loans.json` / `Loans` | `l1`, `l2` |
 
-Each API reads/writes its own JSON file. Override the path in `appsettings.json`:
+When using JSON persistence, override the path in `appsettings.json`:
 
 ```json
 {
   "Authors": { "DataFilePath": "data/authors.json" }
 }
+```
+
+---
+
+## Persistence
+
+Services support **JSON files** or **SQL Server**. Switch with `Persistence:Provider` in each API's `appsettings.json`.
+
+| Provider | Value | Storage |
+|----------|-------|---------|
+| JSON files | `Json` | `data/*.json` (used by unit/integration tests) |
+| SQL Server | `SqlServer` | `LibraryMicroservices` database (default) |
+
+### SQL Server (default)
+
+```json
+"Persistence": {
+  "Provider": "SqlServer"
+},
+"ConnectionStrings": {
+  "LibraryDatabase": "Server=localhost;Database=LibraryMicroservices;Trusted_Connection=True;TrustServerCertificate=True"
+}
+```
+
+Create and seed the database:
+
+```powershell
+cd C:\Me\Projects\LibraryMicroservices\database
+.\setup-database.ps1
+```
+
+See `database/README.md` for full database setup details.
+
+### JSON files
+
+```json
+"Persistence": { "Provider": "Json" },
+"Authors": { "DataFilePath": "data/authors.json" }
 ```
 
 ---
@@ -315,6 +404,7 @@ Stop all services:
 dotnet run --project src/Authors/Authors.Api
 dotnet run --project src/Books/Books.Api
 dotnet run --project src/Loans/Loans.Api
+dotnet run --project src/Members/Members.Api
 dotnet run --project src/ApiGateway/ApiGateway
 ```
 

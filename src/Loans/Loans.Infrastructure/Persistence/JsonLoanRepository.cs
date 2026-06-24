@@ -17,7 +17,7 @@ public sealed class JsonLoanRepository : JsonFileRepository<Loan, string>, ILoan
         {
             Id = key,
             BookId = entity.BookId,
-            BorrowerName = entity.BorrowerName,
+            MemberId = entity.MemberId,
             LoanDate = entity.LoanDate,
             ReturnDate = entity.ReturnDate
         };
@@ -38,7 +38,7 @@ public sealed class JsonLoanRepository : JsonFileRepository<Loan, string>, ILoan
             {
                 Id = id,
                 BookId = loan.BookId,
-                BorrowerName = loan.BorrowerName,
+                MemberId = loan.MemberId,
                 LoanDate = loan.LoanDate,
                 ReturnDate = loan.ReturnDate
             },

@@ -20,6 +20,7 @@ public sealed class AuthorsApiTests : IClassFixture<WebApplicationFactory<Progra
             {
                 config.AddInMemoryCollection(new Dictionary<string, string?>
                 {
+                    ["Persistence:Provider"] = "Json",
                     ["Authors:DataFilePath"] = dataFilePath
                 });
             });

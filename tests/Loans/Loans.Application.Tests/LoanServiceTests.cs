@@ -1,4 +1,5 @@
 using Loans.Application.DTOs;
+using Loans.Application.Integrations;
 using Loans.Application.Services;
 using Loans.Infrastructure.Persistence;
 using Shared.Testing;
@@ -7,24 +8,29 @@ namespace Loans.Application.Tests;
 
 public sealed class LoanServiceTests : IDisposable
 {
-    private readonly string _dataFilePath;
+    private readonly string _loansFilePath;
     private readonly LoanService _sut;
 
     public LoanServiceTests()
     {
-        _dataFilePath = TempJsonFile.CreateCopy("loans.json");
-        var repository = new JsonLoanRepository(_dataFilePath);
-        _sut = new LoanService(repository);
+        _loansFilePath = TempJsonFile.CreateCopy("loans.json");
+        var loanRepository = new JsonLoanRepository(_loansFilePath);
+        var membersApiClient = new TestMembersApiClient(
+        [
+            new MemberReference("m1", "Test Member")
+        ]);
+        _sut = new LoanService(loanRepository, membersApiClient);
     }
 
     [Fact]
     public async Task CreateAsync_AddsActiveLoan()
     {
         var created = await _sut.CreateAsync(
-            new CreateLoanRequest("b3", "Charlie Brown", new DateOnly(2026, 6, 1)));
+            new CreateLoanRequest("b3", "m1", new DateOnly(2026, 6, 1)));
 
         Assert.NotNull(created);
         Assert.Null(created.ReturnDate);
+        Assert.Equal("m1", created.MemberId);
     }
 
     [Fact]
@@ -45,9 +51,22 @@ public sealed class LoanServiceTests : IDisposable
 
     public void Dispose()
     {
-        if (File.Exists(_dataFilePath))
+        if (File.Exists(_loansFilePath))
         {
-            File.Delete(_dataFilePath);
+            File.Delete(_loansFilePath);
         }
+    }
+
+    private sealed class TestMembersApiClient(IEnumerable<MemberReference> members) : IMembersApiClient
+    {
+        private readonly Dictionary<string, string> _members = members.ToDictionary(member => member.Id, member => member.Name);
+
+        public Task<MemberReference?> GetByIdAsync(string memberId, CancellationToken cancellationToken = default) =>
+            Task.FromResult(_members.TryGetValue(memberId, out var name)
+                ? new MemberReference(memberId, name)
+                : null);
+
+        public Task<IReadOnlyDictionary<string, string>> GetNameLookupAsync(CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyDictionary<string, string>>(_members);
     }
 }

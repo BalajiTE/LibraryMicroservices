@@ -1,19 +1,17 @@
 using Authors.Application;
 using Authors.Infrastructure;
-// Without deployment configuration
+using Shared.Api;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddLibrarySwagger("Authors API", "Library authors microservice");
 builder.Services.AddAuthorsApplication();
 builder.Services.AddAuthorsInfrastructure(builder.Configuration);
 
 var app = builder.Build();
 
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
+app.UseLibrarySwaggerUi();
 
 app.MapControllers();
 app.MapGet("/health", () => Results.Ok(new { service = "Authors", status = "Healthy" }));

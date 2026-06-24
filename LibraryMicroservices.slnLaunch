@@ -18,6 +18,11 @@
         "DebugTarget": "Loans.Api"
       },
       {
+        "Path": "src\\Members\\Members.Api\\Members.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "Members.Api"
+      },
+      {
         "Path": "src\\ApiGateway\\ApiGateway\\ApiGateway.csproj",
         "Action": "Start",
         "DebugTarget": "ApiGateway"
